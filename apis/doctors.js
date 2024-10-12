@@ -1,18 +1,15 @@
 const doctorsModel = require("../models/Doctor");
-const specialityModel = require("../models/speciality");
 const genericMethod = require("../models/generic.js");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 
 const docMethod = new genericMethod(doctorsModel);
-const spMethod = new genericMethod(specialityModel);
-
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images/doctors");
   },
   filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1]; // Get file extension
+    const ext = file.mimetype.split("/")[1];
     cb(null, `doctor-${uuidv4()}.${ext}`);
   },
 });
@@ -21,12 +18,17 @@ const uploader = multer({ storage: multerStorage });
 
 const uploadMiddleware = uploader.single("img");
 
-// GET all doctors (JSON response)
 const getAllDoctors = async (req, res) => {
+  const { page, limit, sp_id, name } = req.query;
+  let filters = {};
+  if (sp_id) filters.sp_id = sp_id;
+  if (name) filters.name = { $regex: name, $options: "i" };
   try {
     const doctors = await docMethod.getAll(
-      {},
-      { ref: "sp_id", fields: ["title"] }
+      filters,
+      { ref: "sp_id", fields: ["title"] },
+      parseInt(page),
+      parseInt(limit)
     );
     res.status(200).json({ success: true, doctors });
   } catch (error) {
@@ -36,7 +38,7 @@ const getAllDoctors = async (req, res) => {
   }
 };
 
-// GET a single doctor by ID (JSON response)
+// get one
 const getDoctorById = async (req, res) => {
   try {
     const doctor = await docMethod.getById(req.params.id);
@@ -52,7 +54,7 @@ const getDoctorById = async (req, res) => {
   }
 };
 
-// POST (create) a new doctor (JSON response)
+// add
 const addDoctor = async (req, res) => {
   try {
     const {
@@ -84,7 +86,7 @@ const addDoctor = async (req, res) => {
   }
 };
 
-// PUT (update) a doctor by ID (JSON response)
+// update
 const updateDoctor = async (req, res) => {
   const { id } = req.params;
   try {
@@ -104,8 +106,6 @@ const updateDoctor = async (req, res) => {
       contacts: { phone, facebook, linkedin, instagram },
       resume,
     };
-
-    // Update the image if a new file is uploaded
     if (req.file) {
       updateData.img = `/images/doctors/${req.file.filename}`;
     }
@@ -124,19 +124,17 @@ const updateDoctor = async (req, res) => {
   }
 };
 
-// DELETE a doctor by ID (JSON response)
+// delete
 const deleteDoctor = async (req, res) => {
   const { id } = req.params;
   try {
     const deletedDoctor = await docMethod.delete(id);
     if (deletedDoctor) {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Doctor deleted",
-          doctor: deletedDoctor,
-        });
+      res.status(200).json({
+        success: true,
+        message: "Doctor deleted",
+        doctor: deletedDoctor,
+      });
     } else {
       res.status(404).json({ success: false, message: "Doctor not found" });
     }

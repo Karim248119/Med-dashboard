@@ -11,10 +11,10 @@ router.get(base, controller.getAllDoctors);
 router.get(`${base}/:id`, controller.getDoctorById);
 
 // Add
-router.post(`${base}/add`, controller.addDoctor);
+router.post(`${base}/add`, controller.uploadMiddleware, controller.addDoctor);
 
 // Update
-router.put(`${base}/:id`, controller.updateDoctor);
+router.put(`${base}/:id`, controller.uploadMiddleware, controller.updateDoctor);
 
 // Delete
 router.delete(`${base}/:id`, controller.deleteDoctor);

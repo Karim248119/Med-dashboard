@@ -10,7 +10,7 @@ const doctorSchema = new mongoose.Schema({
   img: { type: String, required: false },
   resume: { type: String, required: true },
   contacts: {
-    phone: { type: String, required: true },
+    phone: { type: String },
     facebook: { type: String },
     linkedin: { type: String },
     instagram: { type: String },

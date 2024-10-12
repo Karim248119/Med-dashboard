@@ -1,4 +1,3 @@
-const { document } = require("postcss");
 const doctorsModel = require("../models/Doctor");
 const specialityModel = require("../models/speciality");
 const genericMethod = require("../models/generic.js");
@@ -61,7 +60,7 @@ const addDoctor = async (req, res) => {
     resume,
   } = req.body;
 
-  // Nest the contacts data
+  //contacts data
   const contacts = {
     phone,
     facebook,
@@ -83,7 +82,7 @@ const addDoctor = async (req, res) => {
 };
 
 const updateDoctor = async (req, res) => {
-  const { id } = req.params; // Get the ID from the route parameters
+  const { id } = req.params;
   const {
     name,
     sp_id,
@@ -94,7 +93,6 @@ const updateDoctor = async (req, res) => {
     resume,
   } = req.body;
 
-  // Prepare the update data
   const updateData = {
     name,
     sp_id,
@@ -107,17 +105,14 @@ const updateDoctor = async (req, res) => {
     resume,
   };
 
-  // Handle image upload if a new image is provided
+  //image
   if (req.file) {
     updateData.img = `/images/doctors/${req.file.filename}`;
   }
 
   try {
-    // Update the doctor in the database
     await docMethod.update(id, updateData);
     console.log("Doctor updated:", updateData);
-
-    // Redirect to the doctors list
     res.status(200).redirect("/doctors");
   } catch (error) {
     console.error("Error updating doctor:", error);
@@ -126,12 +121,11 @@ const updateDoctor = async (req, res) => {
 };
 
 const deleteDoctor = async (req, res) => {
-  const { id } = req.params; // Get the ID from the route parameters
+  const { id } = req.params;
   try {
-    // Delete the doctor from the database
     await docMethod.delete(id);
     console.log("Doctor deleted:", id);
-    // Redirect to the doctors list after successful deletion
+
     res.status(200).redirect("/doctors");
   } catch (error) {
     console.error("Error deleting doctor:", error);
