@@ -26,7 +26,7 @@ const getAllDoctors = async (req, res) => {
   try {
     const doctors = await docMethod.getAll(
       filters,
-      { ref: "sp_id", fields: ["title"] },
+      [{ ref: "sp_id", fields: ["title"] }],
       parseInt(page),
       parseInt(limit)
     );

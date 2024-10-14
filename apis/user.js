@@ -1,7 +1,12 @@
 const userModel = require("../models/user.js");
 const genericMethod = require("../models/generic.js");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userMethods = new genericMethod(userModel);
+
+const JWT_SECRET_KEY =
+  "175b5a1ba812f314c2c83b900a22a807c3d93a22fb7c639ac56c2b9e57b23ba0";
 
 //getAll
 
@@ -24,15 +29,33 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-//add
-
+//add (Register)
 const addUser = async (req, res) => {
   try {
-    const data = req.body;
-    console.log("req:", req.body);
+    const { name, email, password, role } = req.body;
+    const oldUser = await userModel.findOne({ email: email });
+    if (oldUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+    const newUser = await userMethods.create({
+      name,
+      email,
+      password: bcrypt.hashSync(password, 10),
+      role,
+    });
 
-    const user = await userMethods.create(data);
-    res.status(201).json({ success: true, user });
+    //JWT token
+    const token = jwt.sign(
+      { id: newUser._id, email: newUser.email },
+      JWT_SECRET_KEY
+    );
+    newUser.token = token;
+    await newUser.save();
+
+    res.status(201).json({ success: true, user: newUser });
   } catch (error) {
     res.status(500).json({ success: false, error });
   }
@@ -65,9 +88,48 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: error });
   }
 };
+
+//login
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email & password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+    const user = await userModel.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User Not Found",
+      });
+    }
+    const matchPassword = await bcrypt.compare(password, user.password);
+    if (user && matchPassword) {
+      //JWT token
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        JWT_SECRET_KEY
+      );
+
+      return res.json({
+        success: true,
+        user: user,
+        data: { token },
+      });
+    } else {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
 module.exports = {
   getAllUsers,
   addUser,
   updateUser,
   deleteUser,
+  login,
 };

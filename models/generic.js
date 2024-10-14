@@ -9,24 +9,26 @@ module.exports = class genericModel {
     return await instance.save();
   }
 
-  async getAll(
-    filters = {},
-    populateObj = { ref: "", fields: [] },
-    page,
-    limit
-  ) {
-    const populateFields = Array.isArray(populateObj.fields)
-      ? populateObj.fields.join(" ")
-      : "";
+  async getAll(filters = {}, populateObjs = [], page, limit) {
     const totalCount = await this.#Model.countDocuments(filters);
-
     const totalPages = Math.ceil(totalCount / limit);
 
-    const results = await this.#Model
+    let query = this.#Model
       .find(filters)
-      .populate(populateObj.ref, populateFields)
       .skip((page - 1) * limit)
       .limit(limit);
+
+    if (Array.isArray(populateObjs)) {
+      populateObjs.forEach((populateObj) => {
+        const populateFields = Array.isArray(populateObj.fields)
+          ? populateObj.fields.join(" ")
+          : "";
+        query = query.populate(populateObj.ref, populateFields);
+      });
+    }
+
+    const results = await query;
+
     return {
       data: results,
       totalPages,

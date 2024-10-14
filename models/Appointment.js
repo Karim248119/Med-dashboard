@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema({
-  user: { type: String, required: false },
   name: { type: String, required: true },
   gender: { type: String, required: true },
   email: { type: String, required: true },
@@ -12,6 +11,16 @@ const appointmentSchema = new mongoose.Schema({
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "doctor",
+    required: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+  speciality: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "speciality",
     required: true,
   },
 });

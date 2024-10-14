@@ -10,6 +10,7 @@ const apiSpecialityRoutes = require("./routes/api/specialities.js");
 const apiServiceRoutes = require("./routes/api/services");
 const apiNewseRoutes = require("./routes/api/news");
 const apiUsersRoutes = require("./routes/api/user");
+const apiAppointmentsRoute = require("./routes/api/appointments.js");
 const connectDb = require("./models/db.js");
 const cors = require("cors");
 
@@ -34,7 +35,8 @@ app.use(
   apiSpecialityRoutes,
   apiServiceRoutes,
   apiUsersRoutes,
-  apiNewseRoutes
+  apiNewseRoutes,
+  apiAppointmentsRoute
 );
 
 app.listen(port, () => {
