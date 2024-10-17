@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 
 const userMethods = new genericMethod(userModel);
 
-const JWT_SECRET_KEY =
-  "175b5a1ba812f314c2c83b900a22a807c3d93a22fb7c639ac56c2b9e57b23ba0";
+require("dotenv").config();
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 //getAll
 
@@ -132,4 +133,6 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  userMethods,
+  JWT_SECRET_KEY,
 };

@@ -1,4 +1,5 @@
-const DB_URL =
-  "mongodb+srv://karim:node_123@cluster0.2dtsx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+require("dotenv").config();
+
+const DB_URL = process.env.DB_URL;
 
 module.exports = DB_URL;

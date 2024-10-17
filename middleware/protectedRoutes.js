@@ -1,9 +1,9 @@
 const JWT = require("jsonwebtoken");
-const GenericMethods = require("../models/generic.js");
+const genericMethods = require("../models/generic.js");
 const userModel = require("../models/user.js");
-const { JWT_SECERT } = require("../controllers/user.js");
+const { JWT_SECRET_KEY } = require("../apis/user.js");
 
-const userMethods = new GenericMethods(userModel);
+const userMethods = new genericMethods(userModel);
 
 const protectedRoutes = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ const protectedRoutes = async (req, res, next) => {
     console.log("token => ", token);
 
     //2- verfy token
-    const { id } = JWT.verify(token, JWT_SECERT);
+    const { id } = JWT.verify(token, JWT_SECRET_KEY);
 
     //3- check if user still exist
     const user = await userMethods.getById(id);

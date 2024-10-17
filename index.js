@@ -1,6 +1,6 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
-const multer = require("multer");
+const env = require("dotenv").config();
 const app = express();
 const mvcRoutes = require("./routes/mvcRoutes.js");
 const doctorsRouter = require("./routes/doctorRoutes");
@@ -15,7 +15,7 @@ const connectDb = require("./models/db.js");
 const cors = require("cors");
 
 const path = require("path");
-const port = 8000;
+const port = process.env.PORT;
 
 app.set("view engine", "pug");
 

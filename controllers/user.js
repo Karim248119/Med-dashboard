@@ -1,7 +1,7 @@
 const userModle = require("../models/user.js");
 const genericMethod = require("../models/generic.js");
 
-const userMetod = genericMethod(userModle);
+const userMetod = new genericMethod(userModle);
 
 const indexController = async (req, res) => {
   const users = await spMethod.getAll();
@@ -10,4 +10,3 @@ const indexController = async (req, res) => {
     currentPath: req.path,
   });
 };
-
