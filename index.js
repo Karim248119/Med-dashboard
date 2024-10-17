@@ -28,7 +28,6 @@ app.use(cookieParser());
 
 connectDb();
 
-app.use("/", mvcRoutes, doctorsRouter, specialityRoute);
 app.use(
   "/api",
   apiDoctorRoutes,

@@ -1,6 +1,5 @@
 const express = require("express");
 const controller = require("../../apis/user");
-const protectedRoutes = require("../../middleware/protectedRoutes");
 const router = express.Router();
 
 const base = "/users";
