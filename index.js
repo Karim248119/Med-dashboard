@@ -18,7 +18,7 @@ const path = require("path");
 const port = process.env.PORT;
 
 app.set("view engine", "pug");
-
+app.use(express.static("public"));
 app.use(cors());
 
 app.use(express.static(path.join(__dirname, "public")));
